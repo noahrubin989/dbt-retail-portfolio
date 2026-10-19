@@ -6,3 +6,15 @@ sources:
     tables:
       - name: stores
         description: One row per store, including the web channel.
+      - name: payment_methods
+        description: One row per way a customer can pay.
+      - name: customers
+        description: One row per customer.
+      - name: products
+        description: One row per product the store sells.
+      - name: orders
+        description: One row per order (the header). Products are in order_lines.
+      - name: order_lines
+        description: One row per product on an order.
+      - name: returns
+        description: One row per returned product line.
