@@ -1,3 +1,7 @@
+# Raw source tables
+
+Raw tables as they arrive from the store's operational systems (roughly third normal form). dbt reads them through `sources.yml` and never edits them. All data is synthetic.
+
 ## customers
 
 One row per customer.
@@ -52,6 +56,19 @@ One row per store, including the web channel.
 
 **Messy on purpose:** Inconsistent casing and stray whitespace in text columns (e.g. `Sydney`, `sydney `, `PHYSICAL`).
 
+## payment_methods
+
+One row per way a customer can pay.
+
+| column | type | notes |
+|---|---|---|
+| payment_method_id | integer | primary key |
+| method_name | text | e.g. 'Visa', 'Cash', 'PayPal' |
+| is_active | text | 'Y' / 'N' |
+
+**Messy on purpose:** Inconsistent casing in `method_name` (`visa`, `VISA`, `Visa`).
+
+## orders
 
 One row per order (the header). Products are in order_lines.
 
@@ -70,7 +87,6 @@ One row per order (the header). Products are in order_lines.
 - `customer_id` is null for walk-in sales, which is expected and gets mapped to the Guest customer.
 - A few duplicate `order_id` rows, so staging has something to deduplicate (optional).
 
-
 ## order_lines
 
 One row per product on an order.
@@ -80,8 +96,8 @@ One row per product on an order.
 | order_line_id | integer | primary key |
 | order_id | integer | links to orders |
 | product_id | integer | links to products |
-| quantity | integer | negative for returns (to be decided) |
-| unit_price | decimal | price per unit at time of sale |
+| quantity | integer | units bought, always positive |
+| unit_price | text | price per unit at time of sale; some values include a currency symbol |
 | created_at | timestamp | |
 | updated_at | timestamp | |
 
