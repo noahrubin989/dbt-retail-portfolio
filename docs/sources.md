@@ -69,3 +69,22 @@ One row per order (the header). Products are in order_lines.
 - Some `store_id` or `payment_method_id` values are null, which shouldn't happen. These are for dbt tests to catch.
 - `customer_id` is null for walk-in sales, which is expected and gets mapped to the Guest customer.
 - A few duplicate `order_id` rows, so staging has something to deduplicate (optional).
+
+
+## order_lines
+
+One row per product on an order.
+
+| column | type | notes |
+|---|---|---|
+| order_line_id | integer | primary key |
+| order_id | integer | links to orders |
+| product_id | integer | links to products |
+| quantity | integer | negative for returns (to be decided) |
+| unit_price | decimal | price per unit at time of sale |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Messy on purpose:**
+- A few `order_id` values in `order_lines` don't exist in `orders` (orphan lines). A dbt `relationships` test catches these.
+- Some `unit_price` values are stored as text with a currency symbol (e.g. `$40.00`), so staging has to clean and cast them.
