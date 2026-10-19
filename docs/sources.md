@@ -18,3 +18,19 @@ One row per customer.
 **Messy on purpose:**
 - Inconsistent casing and stray leading/trailing whitespace in text columns (names, email, sex).
 - Flags mix `true`/`false`, `yes`/`no` and `1`/`0`.
+
+## products
+
+One row per product the store sells.
+
+| column | type | notes |
+|---|---|---|
+| product_id | integer | primary key |
+| product_name | text | |
+| brand | text | |
+| product_category | text | |
+| product_subcategory | text | |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Messy on purpose:** Inconsistent casing and stray whitespace in `product_category` and `product_subcategory` (e.g. `Kitchen`, `kitchen `).
