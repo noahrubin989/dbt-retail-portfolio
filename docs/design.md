@@ -42,4 +42,9 @@ A different brand or model is a different product, so it gets its own row in `di
 
 **Web orders:** the web channel is a row in `dim_store` with `store_type = 'online'`. Physical shops have `store_type = 'physical'`.
 
-**Walk-in (guest) sales:** TBD. Open question: why a placeholder row in `dim_customer` (e.g. `customer_key = -1`, name "Guest") is better than a null `customer_key`.
+**Walk-in (guest) sales:** `dim_customer` contains a placeholder row with `customer_key = -1` and name "Guest". Every walk-in sale points to it, so `customer_key` is never null on `fact_sales`.
+
+Why not leave `customer_key` null:
+- A null never matches in a join, so an inner join to `dim_customer` would silently drop walk-in sales and understate revenue.
+- With the placeholder, every fact row has a valid key. Guest sales are easy to isolate (`customer_key = -1`) or exclude (`<> -1`).
+- dbt tests like `not_null` and `relationships` on `customer_key` can stay strict and catch real data problems.
