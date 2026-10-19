@@ -88,3 +88,19 @@ One row per product on an order.
 **Messy on purpose:**
 - A few `order_id` values in `order_lines` don't exist in `orders` (orphan lines). A dbt `relationships` test catches these.
 - Some `unit_price` values are stored as text with a currency symbol (e.g. `$40.00`), so staging has to clean and cast them.
+
+## returns
+
+One row per returned product line.
+
+| column | type | notes |
+|---|---|---|
+| return_id | integer | primary key |
+| order_line_id | integer | the original line being returned |
+| quantity_returned | integer | positive; dbt flips the sign later |
+| return_timestamp | timestamp | when the return happened |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Messy on purpose:**
+- A few `order_line_id` values don't exist in `order_lines` (orphan returns). A `relationships` test catches these.
