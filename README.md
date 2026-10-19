@@ -1,1 +1,1 @@
-# dbt-banking-portfolio
+# dbt-retail-portfolio
