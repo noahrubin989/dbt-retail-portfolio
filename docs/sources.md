@@ -34,3 +34,20 @@ One row per product the store sells.
 | updated_at | timestamp | |
 
 **Messy on purpose:** Inconsistent casing and stray whitespace in `product_category` and `product_subcategory` (e.g. `Kitchen`, `kitchen `).
+
+## stores
+
+One row per store, including the web channel.
+
+| column | type | notes |
+|---|---|---|
+| store_id | integer | primary key |
+| store_name | text | |
+| store_type | text | 'physical' or 'online' |
+| city | text | null for the online store |
+| state | text | null for the online store |
+| opened_date | date | |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Messy on purpose:** Inconsistent casing and stray whitespace in text columns (e.g. `Sydney`, `sydney `, `PHYSICAL`).
