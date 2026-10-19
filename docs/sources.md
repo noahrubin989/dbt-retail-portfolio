@@ -51,3 +51,21 @@ One row per store, including the web channel.
 | updated_at | timestamp | |
 
 **Messy on purpose:** Inconsistent casing and stray whitespace in text columns (e.g. `Sydney`, `sydney `, `PHYSICAL`).
+
+
+One row per order (the header). Products are in order_lines.
+
+| column | type | notes |
+|---|---|---|
+| order_id | integer | primary key |
+| customer_id | integer | null for walk-in sales |
+| store_id | integer | which store or web channel |
+| payment_method_id | integer | how it was paid |
+| order_timestamp | timestamp | when the sale happened |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+**Messy on purpose:**
+- Some `store_id` or `payment_method_id` values are null, which shouldn't happen. These are for dbt tests to catch.
+- `customer_id` is null for walk-in sales, which is expected and gets mapped to the Guest customer.
+- A few duplicate `order_id` rows, so staging has something to deduplicate (optional).
