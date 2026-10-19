@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_payment_methods
+    description: "Payment methods from the raw source with text cleaned and flags typed. One row per payment method."
+    columns:
+      - name: payment_method_id
+        description: "Unique identifier for the payment method."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: method_name
+        description: "Name of the payment method, for example visa, cash or paypal."
+        data_tests:
+          - not_null
+
+      - name: is_active
+        description: "True if the payment method can currently be used to pay, false if it has been retired."
+        data_tests:
+          - not_null
