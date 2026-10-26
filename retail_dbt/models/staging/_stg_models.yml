@@ -108,3 +108,34 @@ models:
         description: "Timestamp when the customer record was last updated."
         data_tests:
           - not_null
+
+  - name: stg_products
+    description: "Products from the raw source with text cleaned (lowercased, trimmed). One row per product."
+    columns:
+      - name: product_id
+        description: "Unique identifier of the product."
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Name of the product, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: brand
+        description: "Brand of the product, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: product_category
+        description: "Top-level category of the product, lowercased and trimmed so variants like 'Kitchen' and 'kitchen ' match."
+        data_tests:
+          - not_null
+      - name: product_subcategory
+        description: "Subcategory within the product category, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the product record was created."
+      - name: updated_at
+        description: "Timestamp when the product record was last updated."
+        data_tests:
+          - not_null
