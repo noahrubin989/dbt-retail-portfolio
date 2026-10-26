@@ -19,3 +19,92 @@ models:
         description: "True if the payment method can currently be used to pay, false if it has been retired."
         data_tests:
           - not_null
+
+  - name: stg_stores
+    description: "Stores from the raw source with text cleaned and flags typed. One row per store, including the web channel. The web channel is represented as a store with store_type = 'online'."
+    columns:
+      - name: store_id
+        description: "Unique identifier of the store"
+        data_tests:
+          - unique
+          - not_null
+      - name: store_name
+        description: "Name of the store"
+        data_tests:
+          - not_null
+      - name: store_type
+        description: "Type of the store, for example physical or online"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['physical', 'online']
+      - name: city
+        description: "City where the store is located, and null if the store is online"  
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: state
+        description: "State where the store is located, and null if the store is online"
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: opened_date
+        description: "Opening date of the store"
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the store record was created"
+      - name: updated_at
+        description: "Timestamp when the store record was last updated"
+        data_tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Customers from the raw source with text cleaned (lowercased, trimmed) and the marketing and email flags converted to booleans. One row per customer."
+    columns:
+      - name: customer_id
+        description: "Unique identifier of the customer."
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "Customer's first name, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: last_name
+        description: "Customer's last name, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: email
+        description: "Customer's email address, lowercased and trimmed."
+        data_tests:
+          - not_null
+          - unique
+      - name: mobile_number
+        description: "Customer's mobile number including dial code, trimmed but otherwise as in the source."
+        data_tests:
+          - not_null
+      - name: is_marketing_opted_in
+        description: "True if the customer has opted in to marketing communications, false otherwise. Null is not expected: an unrecognised source value becomes null and fails the not_null test."
+        data_tests:
+          - not_null
+      - name: is_email_verified
+        description: "True if the customer's email address has been verified, false otherwise. Null is not expected: an unrecognised source value becomes null and fails the not_null test."
+        data_tests:
+          - not_null
+      - name: sex
+        description: "Customer's sex as recorded in the source system: female, male or other."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['female', 'male', 'other']
+      - name: created_at
+        description: "Timestamp when the customer record was created."
+      - name: updated_at
+        description: "Timestamp when the customer record was last updated."
+        data_tests:
+          - not_null
