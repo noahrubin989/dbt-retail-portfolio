@@ -166,3 +166,49 @@ models:
         description: "Timestamp when the return record was last updated."
         data_tests:
           - not_null
+          
+  - name: stg_orders
+    description: "Orders from the raw source with exact duplicate rows removed (latest updated_at kept). One row per order."
+    columns:
+      - name: order_id
+        description: "Unique identifier of the order."
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Identifier of the customer. Null for walk-in sales, which are mapped to the Guest customer later."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: store_id
+        description: "Identifier of the store or web channel where the order was placed."
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('stg_stores')
+                field: store_id
+      - name: payment_method_id
+        description: "Identifier of the payment method used."
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('stg_payment_methods')
+                field: payment_method_id
+      - name: order_timestamp
+        description: "Timestamp when the sale happened."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the order record was created."
+      - name: updated_at
+        description: "Timestamp when the order record was last updated."
+        data_tests:
+          - not_null
