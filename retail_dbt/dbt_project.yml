@@ -37,4 +37,8 @@ models:             # configuring models (not seeds or snapshots)
       # Which schema in DuckDB these views are created in.
       # Keeps staging separate from raw data and the marts layer.
       +schema: staging
+    
+    intermediate:    # in the folder models/intermediate/
+      +materialized: view
+      +schema: intermediate
 

@@ -152,6 +152,12 @@ models:
         description: "Identifier of the original order line being returned."
         data_tests:
           - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_order_lines')
+                field: order_line_id
+              config:
+                severity: warn
       - name: quantity_returned
         description: "Number of units returned. Always positive here; the sign is flipped later when building fact_sales."
         data_tests:
