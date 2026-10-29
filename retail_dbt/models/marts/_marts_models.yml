@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_payment_method
+    description: "Payment methods plus an Unknown member (key -1) for orders with no payment method recorded. One row per payment method."
+    columns:
+      - name: payment_method_key
+        description: "Key of the payment method. Equals the source payment_method_id; -1 is the Unknown member."
+        data_tests:
+          - unique
+          - not_null
+      - name: method_name
+        description: "Name of the payment method, for example visa, cash or paypal. 'unknown' for the Unknown member."
+        data_tests:
+          - not_null
+      - name: is_active
+        description: "True if the payment method can currently be used to pay. False for the Unknown member."
+        data_tests:
+          - not_null
