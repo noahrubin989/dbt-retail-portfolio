@@ -166,7 +166,7 @@ models:
         description: "Timestamp when the return record was last updated."
         data_tests:
           - not_null
-          
+
   - name: stg_orders
     description: "Orders from the raw source with exact duplicate rows removed (latest updated_at kept). One row per order."
     columns:
@@ -210,5 +210,46 @@ models:
         description: "Timestamp when the order record was created."
       - name: updated_at
         description: "Timestamp when the order record was last updated."
+        data_tests:
+          - not_null
+
+  - name: stg_order_lines
+    description: "Order lines from the raw source with unit_price cleaned (currency symbol removed) and cast to a decimal. One row per product on an order."
+    columns:
+      - name: order_line_id
+        description: "Unique identifier of the order line."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Identifier of the order this line belongs to. Some lines in the source point to orders that don't exist (orphans), which the relationships test reports as a warning."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+              config:
+                severity: warn
+      - name: product_id
+        description: "Identifier of the product on this line."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: quantity
+        description: "Number of units bought. Always positive."
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit at the time of sale, as a decimal with the currency symbol removed."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the order line record was created."
+      - name: updated_at
+        description: "Timestamp when the order line record was last updated."
         data_tests:
           - not_null
