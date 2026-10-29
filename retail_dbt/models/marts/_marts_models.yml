@@ -55,3 +55,27 @@ models:
           - not_null:
               config:
                 where: "store_key != -1"
+  - name: dim_product
+    description: "Products with their brand, category and subcategory. One row per product. No Unknown member, because every sale and return line has a valid product."
+    columns:
+      - name: product_key
+        description: "Key of the product. Equals the source product_id."
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Name of the product."
+        data_tests:
+          - not_null
+      - name: brand
+        description: "Brand of the product."
+        data_tests:
+          - not_null
+      - name: product_category
+        description: "Top-level category of the product."
+        data_tests:
+          - not_null
+      - name: product_subcategory
+        description: "Subcategory within the product category."
+        data_tests:
+          - not_null
