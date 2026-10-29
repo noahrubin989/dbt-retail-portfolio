@@ -139,3 +139,30 @@ models:
         description: "Timestamp when the product record was last updated."
         data_tests:
           - not_null
+
+  - name: stg_returns
+    description: "Returns from the raw source, passed through with no cleaning needed. One row per returned order line."
+    columns:
+      - name: return_id
+        description: "Unique identifier of the return."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_line_id
+        description: "Identifier of the original order line being returned."
+        data_tests:
+          - not_null
+      - name: quantity_returned
+        description: "Number of units returned. Always positive here; the sign is flipped later when building fact_sales."
+        data_tests:
+          - not_null
+      - name: return_timestamp
+        description: "Timestamp when the return happened."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the return record was created."
+      - name: updated_at
+        description: "Timestamp when the return record was last updated."
+        data_tests:
+          - not_null

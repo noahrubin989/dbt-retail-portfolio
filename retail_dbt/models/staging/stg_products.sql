@@ -1,4 +1,4 @@
-with raw as (
+with raw_data as (
     select * from {{ source('raw', 'products')}}
 ), 
 
@@ -11,7 +11,7 @@ cleaned as (
         , lower(trim(product_subcategory)) as product_subcategory
         , created_at
         , updated_at
-    from raw
+    from raw_data
 )
 
 select * from cleaned
