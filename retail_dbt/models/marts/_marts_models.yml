@@ -17,3 +17,41 @@ models:
         description: "True if the payment method can currently be used to pay. False for the Unknown member."
         data_tests:
           - not_null
+
+  - name: dim_store
+    description: "Stores and the web channel, plus an Unknown member (key -1) for orders with no store recorded. One row per store. The web channel is a store with store_type = 'online'."
+    columns:
+      - name: store_key
+        description: "Key of the store. Equals the source store_id; -1 is the Unknown member."
+        data_tests:
+          - unique
+          - not_null
+      - name: store_name
+        description: "Name of the store. 'unknown' for the Unknown member."
+        data_tests:
+          - not_null
+      - name: store_type
+        description: "Type of the store: physical or online. 'unknown' for the Unknown member."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['physical', 'online', 'unknown']
+      - name: city
+        description: "City of the store. Null for the web channel and the Unknown member."
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: state
+        description: "State of the store. Null for the web channel and the Unknown member."
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: opened_date
+        description: "Opening date of the store. Null for the Unknown member."
+        data_tests:
+          - not_null:
+              config:
+                where: "store_key != -1"
