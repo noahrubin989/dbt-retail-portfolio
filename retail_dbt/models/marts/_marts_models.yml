@@ -79,3 +79,50 @@ models:
         description: "Subcategory within the product category."
         data_tests:
           - not_null
+
+  - name: dim_customer
+    description: "Customers plus a Guest member (key -1) that walk-in sales are mapped to. One row per customer."
+    columns:
+      - name: customer_key
+        description: "Key of the customer. Equals the source customer_id; -1 is the Guest member."
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "Customer's first name. 'guest' for the Guest member."
+        data_tests:
+          - not_null
+      - name: last_name
+        description: "Customer's last name. Null for the Guest member."
+        data_tests:
+          - not_null:
+              config:
+                where: "customer_key != -1"
+      - name: email
+        description: "Customer's email address. Null for the Guest member."
+        data_tests:
+          - not_null:
+              config:
+                where: "customer_key != -1"
+          - unique
+      - name: mobile_number
+        description: "Customer's mobile number including dial code. Null for the Guest member."
+        data_tests:
+          - not_null:
+              config:
+                where: "customer_key != -1"
+      - name: is_marketing_opted_in
+        description: "True if the customer has opted in to marketing. False for the Guest member."
+        data_tests:
+          - not_null
+      - name: is_email_verified
+        description: "True if the customer's email has been verified. False for the Guest member."
+        data_tests:
+          - not_null
+      - name: sex
+        description: "Customer's sex as recorded in the source: female, male or other. 'unknown' for the Guest member."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['female', 'male', 'other', 'unknown']
