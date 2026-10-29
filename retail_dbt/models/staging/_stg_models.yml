@@ -1,0 +1,255 @@
+version: 2
+
+models:
+  - name: stg_payment_methods
+    description: "Payment methods from the raw source with text cleaned and flags typed. One row per payment method."
+    columns:
+      - name: payment_method_id
+        description: "Unique identifier for the payment method."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: method_name
+        description: "Name of the payment method, for example visa, cash or paypal."
+        data_tests:
+          - not_null
+
+      - name: is_active
+        description: "True if the payment method can currently be used to pay, false if it has been retired."
+        data_tests:
+          - not_null
+
+  - name: stg_stores
+    description: "Stores from the raw source with text cleaned and flags typed. One row per store, including the web channel. The web channel is represented as a store with store_type = 'online'."
+    columns:
+      - name: store_id
+        description: "Unique identifier of the store"
+        data_tests:
+          - unique
+          - not_null
+      - name: store_name
+        description: "Name of the store"
+        data_tests:
+          - not_null
+      - name: store_type
+        description: "Type of the store, for example physical or online"
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['physical', 'online']
+      - name: city
+        description: "City where the store is located, and null if the store is online"  
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: state
+        description: "State where the store is located, and null if the store is online"
+        data_tests:
+          - not_null:
+              config:
+                where: "store_type = 'physical'"
+      - name: opened_date
+        description: "Opening date of the store"
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the store record was created"
+      - name: updated_at
+        description: "Timestamp when the store record was last updated"
+        data_tests:
+          - not_null
+
+  - name: stg_customers
+    description: "Customers from the raw source with text cleaned (lowercased, trimmed) and the marketing and email flags converted to booleans. One row per customer."
+    columns:
+      - name: customer_id
+        description: "Unique identifier of the customer."
+        data_tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "Customer's first name, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: last_name
+        description: "Customer's last name, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: email
+        description: "Customer's email address, lowercased and trimmed."
+        data_tests:
+          - not_null
+          - unique
+      - name: mobile_number
+        description: "Customer's mobile number including dial code, trimmed but otherwise as in the source."
+        data_tests:
+          - not_null
+      - name: is_marketing_opted_in
+        description: "True if the customer has opted in to marketing communications, false otherwise. Null is not expected: an unrecognised source value becomes null and fails the not_null test."
+        data_tests:
+          - not_null
+      - name: is_email_verified
+        description: "True if the customer's email address has been verified, false otherwise. Null is not expected: an unrecognised source value becomes null and fails the not_null test."
+        data_tests:
+          - not_null
+      - name: sex
+        description: "Customer's sex as recorded in the source system: female, male or other."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['female', 'male', 'other']
+      - name: created_at
+        description: "Timestamp when the customer record was created."
+      - name: updated_at
+        description: "Timestamp when the customer record was last updated."
+        data_tests:
+          - not_null
+
+  - name: stg_products
+    description: "Products from the raw source with text cleaned (lowercased, trimmed). One row per product."
+    columns:
+      - name: product_id
+        description: "Unique identifier of the product."
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Name of the product, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: brand
+        description: "Brand of the product, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: product_category
+        description: "Top-level category of the product, lowercased and trimmed so variants like 'Kitchen' and 'kitchen ' match."
+        data_tests:
+          - not_null
+      - name: product_subcategory
+        description: "Subcategory within the product category, lowercased and trimmed."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the product record was created."
+      - name: updated_at
+        description: "Timestamp when the product record was last updated."
+        data_tests:
+          - not_null
+
+  - name: stg_returns
+    description: "Returns from the raw source, passed through with no cleaning needed. One row per returned order line."
+    columns:
+      - name: return_id
+        description: "Unique identifier of the return."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_line_id
+        description: "Identifier of the original order line being returned."
+        data_tests:
+          - not_null
+      - name: quantity_returned
+        description: "Number of units returned. Always positive here; the sign is flipped later when building fact_sales."
+        data_tests:
+          - not_null
+      - name: return_timestamp
+        description: "Timestamp when the return happened."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the return record was created."
+      - name: updated_at
+        description: "Timestamp when the return record was last updated."
+        data_tests:
+          - not_null
+
+  - name: stg_orders
+    description: "Orders from the raw source with exact duplicate rows removed (latest updated_at kept). One row per order."
+    columns:
+      - name: order_id
+        description: "Unique identifier of the order."
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Identifier of the customer. Null for walk-in sales, which are mapped to the Guest customer later."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: store_id
+        description: "Identifier of the store or web channel where the order was placed."
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('stg_stores')
+                field: store_id
+      - name: payment_method_id
+        description: "Identifier of the payment method used."
+        data_tests:
+          - not_null:
+              config:
+                severity: warn
+          - relationships:
+              arguments:
+                to: ref('stg_payment_methods')
+                field: payment_method_id
+      - name: order_timestamp
+        description: "Timestamp when the sale happened."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the order record was created."
+      - name: updated_at
+        description: "Timestamp when the order record was last updated."
+        data_tests:
+          - not_null
+
+  - name: stg_order_lines
+    description: "Order lines from the raw source with unit_price cleaned (currency symbol removed) and cast to a decimal. One row per product on an order."
+    columns:
+      - name: order_line_id
+        description: "Unique identifier of the order line."
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Identifier of the order this line belongs to. Some lines in the source point to orders that don't exist (orphans), which the relationships test reports as a warning."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+              config:
+                severity: warn
+      - name: product_id
+        description: "Identifier of the product on this line."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: quantity
+        description: "Number of units bought. Always positive."
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit at the time of sale, as a decimal with the currency symbol removed."
+        data_tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the order line record was created."
+      - name: updated_at
+        description: "Timestamp when the order line record was last updated."
+        data_tests:
+          - not_null
