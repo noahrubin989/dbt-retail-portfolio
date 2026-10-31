@@ -75,8 +75,6 @@ cd retail_dbt
 dbt build
 ```
 
-TODO: add how the raw data gets into DuckDB, and where `profiles.yml` lives and what it contains (path and type only, no secrets).
-
 ## Docs and lineage
 
 ```
