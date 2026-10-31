@@ -3,16 +3,37 @@ version: 2
 models:
   - name: fact_sales
     description: "Sales and returns at order line grain. One row per sale line and one row per return, with returns as negative rows. order_id is kept as a degenerate dimension. Missing customers map to the Guest member (-1) and missing stores or payment methods map to the Unknown member (-1)."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: order_line_id
+        data_type: integer
         description: "Identifier of the order line. A return carries the order_line_id of the sale it reverses, so this is not unique on its own."
         data_tests:
           - not_null
+      - name: return_id
+        data_type: varchar
+        description: "Identifier of the return. Null for sale rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "transaction_type = 'return'"
+      - name: transaction_type
+        data_type: varchar
+        description: "Whether the row is a sale or a return."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['sale', 'return']
       - name: order_id
+        data_type: integer
         description: "Identifier of the order. A degenerate dimension, so it has no dimension table of its own."
         data_tests:
           - not_null
       - name: product_key
+        data_type: integer
         description: "Key of the product. Joins to dim_product."
         data_tests:
           - not_null
@@ -21,6 +42,7 @@ models:
                 to: ref('dim_product')
                 field: product_key
       - name: customer_key
+        data_type: integer
         description: "Key of the customer. -1 is the Guest member for walk-in sales. Joins to dim_customer."
         data_tests:
           - not_null
@@ -29,6 +51,7 @@ models:
                 to: ref('dim_customer')
                 field: customer_key
       - name: store_key
+        data_type: integer
         description: "Key of the store or web channel. -1 is the Unknown member. Joins to dim_store."
         data_tests:
           - not_null
@@ -37,6 +60,7 @@ models:
                 to: ref('dim_store')
                 field: store_key
       - name: payment_method_key
+        data_type: integer
         description: "Key of the payment method. -1 is the Unknown member. Joins to dim_payment_method."
         data_tests:
           - not_null
@@ -45,6 +69,7 @@ models:
                 to: ref('dim_payment_method')
                 field: payment_method_key
       - name: date_key
+        data_type: integer
         description: "Date of the sale, or of the return for return rows, as an integer in yyyymmdd form. Joins to dim_date."
         data_tests:
           - not_null
@@ -53,27 +78,17 @@ models:
                 to: ref('dim_date')
                 field: date_key
       - name: quantity
+        data_type: integer
         description: "Units bought, positive for sales and negative for returns."
         data_tests:
           - not_null
       - name: unit_price
+        data_type: decimal(10,2)
         description: "Price per unit at the time of sale."
         data_tests:
           - not_null
-      - name: return_id
-        description: "Identifier of the return. Null for sale rows."
-        data_tests:
-          - not_null:
-              config:
-                where: "transaction_type = 'return'"
-      - name: transaction_type
-        description: "Whether the row is a sale or a return."
-        data_tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: ['sale', 'return']
       - name: line_amount
+        data_type: decimal(18,2)
         description: "quantity * unit_price. Positive for sales and negative for returns."
         data_tests:
           - not_null
