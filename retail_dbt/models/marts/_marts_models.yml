@@ -2,65 +2,81 @@ version: 2
 
 models:
   - name: fact_sales
-    description: "Sales at order line grain. One row per product on an order line. Returns will be added as negative rows in a later step. order_id is kept as a degenerate dimension. Missing customers map to the Guest member (-1) and missing stores or payment methods map to the Unknown member (-1)."
+    description: "Sales and returns at order line grain. One row per sale line and one row per return, with returns as negative rows. order_id is kept as a degenerate dimension. Missing customers map to the Guest member (-1) and missing stores or payment methods map to the Unknown member (-1)."
     columns:
-    - name: order_line_id
-      description: "Identifier of the order line. Unique for now, but this changes once returns are unioned in."
-      data_tests:
-        - unique
-        - not_null
-    - name: order_id
-      description: "Identifier of the order. A degenerate dimension, so it has no dimension table of its own."
-      data_tests:
-        - not_null
-    - name: product_key
-      description: "Key of the product. Joins to dim_product."
-      data_tests:
-        - not_null
-        - relationships:
-            arguments:
-              to: ref('dim_product')
-              field: product_key
-    - name: customer_key
-      description: "Key of the customer. -1 is the Guest member for walk-in sales. Joins to dim_customer."
-      data_tests:
-        - not_null
-        - relationships:
-            arguments:
-              to: ref('dim_customer')
-              field: customer_key
-    - name: store_key
-      description: "Key of the store or web channel. -1 is the Unknown member. Joins to dim_store."
-      data_tests:
-        - not_null
-        - relationships:
-            arguments:
-              to: ref('dim_store')
-              field: store_key
-    - name: payment_method_key
-      description: "Key of the payment method. -1 is the Unknown member. Joins to dim_payment_method."
-      data_tests:
-        - not_null
-        - relationships:
-            arguments:
-              to: ref('dim_payment_method')
-              field: payment_method_key
-    - name: date_key
-      description: "Date of the sale as an integer in yyyymmdd form. Joins to dim_date."
-      data_tests:
-        - not_null
-        - relationships:
-            arguments:
-              to: ref('dim_date')
-              field: date_key
-    - name: quantity
-      description: "Number of units bought. Always positive for sales."
-      data_tests:
-        - not_null
-    - name: unit_price
-      description: "Price per unit at the time of sale."
-      data_tests:
-        - not_null
+      - name: order_line_id
+        description: "Identifier of the order line. A return carries the order_line_id of the sale it reverses, so this is not unique on its own."
+        data_tests:
+          - not_null
+      - name: order_id
+        description: "Identifier of the order. A degenerate dimension, so it has no dimension table of its own."
+        data_tests:
+          - not_null
+      - name: product_key
+        description: "Key of the product. Joins to dim_product."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: customer_key
+        description: "Key of the customer. -1 is the Guest member for walk-in sales. Joins to dim_customer."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: store_key
+        description: "Key of the store or web channel. -1 is the Unknown member. Joins to dim_store."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_key
+      - name: payment_method_key
+        description: "Key of the payment method. -1 is the Unknown member. Joins to dim_payment_method."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_payment_method')
+                field: payment_method_key
+      - name: date_key
+        description: "Date of the sale, or of the return for return rows, as an integer in yyyymmdd form. Joins to dim_date."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: quantity
+        description: "Units bought, positive for sales and negative for returns."
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit at the time of sale."
+        data_tests:
+          - not_null
+      - name: return_id
+        description: "Identifier of the return. Null for sale rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "transaction_type = 'return'"
+      - name: transaction_type
+        description: "Whether the row is a sale or a return."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['sale', 'return']
+      - name: line_amount
+        description: "quantity * unit_price. Positive for sales and negative for returns."
+        data_tests:
+          - not_null
   - name: dim_payment_method
     description: "Payment methods plus an Unknown member (key -1) for orders with no payment method recorded. One row per payment method."
     columns:
