@@ -1,36 +1,140 @@
 version: 2
 
 models:
+  - name: fact_sales
+    description: "Sales and returns at order line grain. One row per sale line and one row per return, with returns as negative rows. order_id is kept as a degenerate dimension. Missing customers map to the Guest member (-1) and missing stores or payment methods map to the Unknown member (-1)."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_line_id
+        data_type: integer
+        description: "Identifier of the order line. A return carries the order_line_id of the sale it reverses, so this is not unique on its own."
+        data_tests:
+          - not_null
+      - name: return_id
+        data_type: varchar
+        description: "Identifier of the return. Null for sale rows."
+        data_tests:
+          - not_null:
+              config:
+                where: "transaction_type = 'return'"
+      - name: transaction_type
+        data_type: varchar
+        description: "Whether the row is a sale or a return."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['sale', 'return']
+      - name: order_id
+        data_type: integer
+        description: "Identifier of the order. A degenerate dimension, so it has no dimension table of its own."
+        data_tests:
+          - not_null
+      - name: product_key
+        data_type: integer
+        description: "Key of the product. Joins to dim_product."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: customer_key
+        data_type: integer
+        description: "Key of the customer. -1 is the Guest member for walk-in sales. Joins to dim_customer."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: store_key
+        data_type: integer
+        description: "Key of the store or web channel. -1 is the Unknown member. Joins to dim_store."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_key
+      - name: payment_method_key
+        data_type: integer
+        description: "Key of the payment method. -1 is the Unknown member. Joins to dim_payment_method."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_payment_method')
+                field: payment_method_key
+      - name: date_key
+        data_type: integer
+        description: "Date of the sale, or of the return for return rows, as an integer in yyyymmdd form. Joins to dim_date."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: quantity
+        data_type: integer
+        description: "Units bought, positive for sales and negative for returns."
+        data_tests:
+          - not_null
+      - name: unit_price
+        data_type: decimal(10,2)
+        description: "Price per unit at the time of sale."
+        data_tests:
+          - not_null
+      - name: line_amount
+        data_type: decimal(18,2)
+        description: "quantity * unit_price. Positive for sales and negative for returns."
+        data_tests:
+          - not_null
+
   - name: dim_payment_method
     description: "Payment methods plus an Unknown member (key -1) for orders with no payment method recorded. One row per payment method."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: payment_method_key
+        data_type: integer
         description: "Key of the payment method. Equals the source payment_method_id; -1 is the Unknown member."
         data_tests:
           - unique
           - not_null
       - name: method_name
+        data_type: varchar
         description: "Name of the payment method, for example visa, cash or paypal. 'unknown' for the Unknown member."
         data_tests:
           - not_null
       - name: is_active
+        data_type: boolean
         description: "True if the payment method can currently be used to pay. False for the Unknown member."
         data_tests:
           - not_null
 
   - name: dim_store
     description: "Stores and the web channel, plus an Unknown member (key -1) for orders with no store recorded. One row per store. The web channel is a store with store_type = 'online'."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: store_key
+        data_type: integer
         description: "Key of the store. Equals the source store_id; -1 is the Unknown member."
         data_tests:
           - unique
           - not_null
       - name: store_name
+        data_type: varchar
         description: "Name of the store. 'unknown' for the Unknown member."
         data_tests:
           - not_null
       - name: store_type
+        data_type: varchar
         description: "Type of the store: physical or online. 'unknown' for the Unknown member."
         data_tests:
           - not_null
@@ -38,67 +142,86 @@ models:
               arguments:
                 values: ['physical', 'online', 'unknown']
       - name: city
+        data_type: varchar
         description: "City of the store. Null for the web channel and the Unknown member."
         data_tests:
           - not_null:
               config:
                 where: "store_type = 'physical'"
       - name: state
+        data_type: varchar
         description: "State of the store. Null for the web channel and the Unknown member."
         data_tests:
           - not_null:
               config:
                 where: "store_type = 'physical'"
       - name: opened_date
+        data_type: date
         description: "Opening date of the store. Null for the Unknown member."
         data_tests:
           - not_null:
               config:
                 where: "store_key != -1"
+
   - name: dim_product
     description: "Products with their brand, category and subcategory. One row per product. No Unknown member, because every sale and return line has a valid product."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: product_key
+        data_type: integer
         description: "Key of the product. Equals the source product_id."
         data_tests:
           - unique
           - not_null
       - name: product_name
+        data_type: varchar
         description: "Name of the product."
         data_tests:
           - not_null
       - name: brand
+        data_type: varchar
         description: "Brand of the product."
         data_tests:
           - not_null
       - name: product_category
+        data_type: varchar
         description: "Top-level category of the product."
         data_tests:
           - not_null
       - name: product_subcategory
+        data_type: varchar
         description: "Subcategory within the product category."
         data_tests:
           - not_null
 
   - name: dim_customer
     description: "Customers plus a Guest member (key -1) that walk-in sales are mapped to. One row per customer."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: customer_key
+        data_type: integer
         description: "Key of the customer. Equals the source customer_id; -1 is the Guest member."
         data_tests:
           - unique
           - not_null
       - name: first_name
+        data_type: varchar
         description: "Customer's first name. 'guest' for the Guest member."
         data_tests:
           - not_null
       - name: last_name
+        data_type: varchar
         description: "Customer's last name. Null for the Guest member."
         data_tests:
           - not_null:
               config:
                 where: "customer_key != -1"
       - name: email
+        data_type: varchar
         description: "Customer's email address. Null for the Guest member."
         data_tests:
           - not_null:
@@ -106,20 +229,24 @@ models:
                 where: "customer_key != -1"
           - unique
       - name: mobile_number
+        data_type: varchar
         description: "Customer's mobile number including dial code. Null for the Guest member."
         data_tests:
           - not_null:
               config:
                 where: "customer_key != -1"
       - name: is_marketing_opted_in
+        data_type: boolean
         description: "True if the customer has opted in to marketing. False for the Guest member."
         data_tests:
           - not_null
       - name: is_email_verified
+        data_type: boolean
         description: "True if the customer's email has been verified. False for the Guest member."
         data_tests:
           - not_null
       - name: sex
+        data_type: varchar
         description: "Customer's sex as recorded in the source: female, male or other. 'unknown' for the Guest member."
         data_tests:
           - not_null
@@ -129,46 +256,59 @@ models:
 
   - name: dim_date
     description: "One row per calendar day from 2020-01-01 to 2075-12-31, generated rather than loaded from a source. Covers every order and return date. Joined to fact_sales on date_key."
+    config:
+      contract:
+        enforced: true
     columns:
       - name: date_key
+        data_type: integer
         description: "Date as an integer in yyyymmdd form, for example 20261031. Joined to fact_sales on this column."
         data_tests:
           - unique
           - not_null
       - name: date_day
+        data_type: date
         description: "The calendar date."
         data_tests:
           - unique
           - not_null
       - name: calendar_year
+        data_type: bigint
         description: "Calendar year, for example 2026."
         data_tests:
           - not_null
       - name: calendar_quarter
+        data_type: bigint
         description: "Calendar quarter, 1 to 4."
         data_tests:
           - not_null
       - name: month_number
+        data_type: bigint
         description: "Month of the year, 1 to 12."
         data_tests:
           - not_null
       - name: month_name
+        data_type: varchar
         description: "Name of the month, for example January."
         data_tests:
           - not_null
       - name: day_of_month
+        data_type: bigint
         description: "Day of the month, 1 to 31."
         data_tests:
           - not_null
       - name: day_of_week_number
+        data_type: bigint
         description: "Day of the week, Monday = 1 to Sunday = 7."
         data_tests:
           - not_null
       - name: day_name
+        data_type: varchar
         description: "Name of the day, for example Monday."
         data_tests:
           - not_null
       - name: is_weekend
+        data_type: boolean
         description: "True for Saturday and Sunday."
         data_tests:
           - not_null
