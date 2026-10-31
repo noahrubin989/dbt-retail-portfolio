@@ -126,3 +126,49 @@ models:
           - accepted_values:
               arguments:
                 values: ['female', 'male', 'other', 'unknown']
+
+  - name: dim_date
+    description: "One row per calendar day from 2020-01-01 to 2075-12-31, generated rather than loaded from a source. Covers every order and return date. Joined to fact_sales on date_key."
+    columns:
+      - name: date_key
+        description: "Date as an integer in yyyymmdd form, for example 20261031. Joined to fact_sales on this column."
+        data_tests:
+          - unique
+          - not_null
+      - name: date_day
+        description: "The calendar date."
+        data_tests:
+          - unique
+          - not_null
+      - name: calendar_year
+        description: "Calendar year, for example 2026."
+        data_tests:
+          - not_null
+      - name: calendar_quarter
+        description: "Calendar quarter, 1 to 4."
+        data_tests:
+          - not_null
+      - name: month_number
+        description: "Month of the year, 1 to 12."
+        data_tests:
+          - not_null
+      - name: month_name
+        description: "Name of the month, for example January."
+        data_tests:
+          - not_null
+      - name: day_of_month
+        description: "Day of the month, 1 to 31."
+        data_tests:
+          - not_null
+      - name: day_of_week_number
+        description: "Day of the week, Monday = 1 to Sunday = 7."
+        data_tests:
+          - not_null
+      - name: day_name
+        description: "Name of the day, for example Monday."
+        data_tests:
+          - not_null
+      - name: is_weekend
+        description: "True for Saturday and Sunday."
+        data_tests:
+          - not_null
