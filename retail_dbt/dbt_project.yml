@@ -42,3 +42,9 @@ models:             # configuring models (not seeds or snapshots)
       +materialized: view
       +schema: intermediate
 
+    marts:           # in the folder models/marts/
+      +materialized: table
+      +schema: marts
+
+    
+
