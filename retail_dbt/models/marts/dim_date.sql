@@ -6,7 +6,7 @@ with dates as (
 )
 
 select
-    cast(strftime(date_day, '%Y%m%d') as integer) as date_key
+    {{ date_to_key('date_day') }} as date_key
     , date_day
     , extract(year from date_day) as calendar_year
     , extract(quarter from date_day) as calendar_quarter
