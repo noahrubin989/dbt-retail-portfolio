@@ -83,12 +83,3 @@ TODO: add how the raw data gets into DuckDB, and where `profiles.yml` lives and 
 dbt docs generate
 dbt docs serve
 ```
-
-TODO: add a lineage graph screenshot at `docs/lineage.png` and link it here.
-
-## Possible next steps
-
-- `clean_text` and `to_boolean` macros for the staging layer
-- A formatting pass on dimension display values
-- Dashboards on the marts layer
-- Databricks adapter
