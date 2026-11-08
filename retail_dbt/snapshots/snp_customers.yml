@@ -1,0 +1,10 @@
+snapshots:
+  - name: snp_customers
+    relation: source('raw', 'customers')   # we snapshot the raw table, not stg_customers. This is dbt's recommended practice: the snapshot records exactly what the source said. If you snapshot the staging model and later change its cleaning logic, the history would hold data shaped by the old logic, and you can't redo it.
+    description: "History of raw.customers. One row per version of a customer; a new version is added whenever updated_at changes."
+    config:
+      schema: snapshots  # stays in its own schema, apart frpm the models we can rebuild 
+      unique_key: customer_id  # tells dbt how to identify "the same customer"  
+      strategy: timestamp  # strategy: timestamp + updated_at: updated_at: a row counts as changed when its updated_at is newer than the stored version's. The alternative, strategy: check, compares the actual column values. Use that when a source has no reliable updated_at.
+      updated_at: updated_at
+      dbt_valid_to_current: "cast('9999-12-31' as timestamp)"  # by default the current version has dbt_valid_to = null. Setting it to 9999-12-31 makes the "between from and to" join simpler
