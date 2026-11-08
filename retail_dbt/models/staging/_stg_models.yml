@@ -63,13 +63,27 @@ models:
           - not_null
 
   - name: stg_customers
-    description: "Customers from the raw source with text cleaned (lowercased, trimmed) and the marketing and email flags converted to booleans. One row per customer."
+    description: "Customer versions from snp_customers with text cleaned (lowercased, trimmed) and the marketing and email flags converted to booleans. One row per version of a customer; the current version has is_current = true."
+    data_tests:
+      - dbt_utils.mutually_exclusive_ranges:  #  For each customer_id, it checks that the versions line up end to end: each version ends exactly where the next one starts, with no overlaps and (gaps: not_allowed) no gaps. If it ever fails, a sale could match two versions (and count twice) or none (and drop out of the fact table).
+          arguments:
+            lower_bound_column: valid_from
+            upper_bound_column: valid_to
+            partition_by: customer_id
+            gaps: not_allowed
     columns:
-      - name: customer_id
-        description: "Unique identifier of the customer."
+      - name: customer_version_id
+        description: "Unique identifier of this version of the customer (dbt_scd_id from the snapshot). This is the grain of the model."
         data_tests:
           - unique
           - not_null
+      - name: customer_id
+        description: "Identifier of the customer. Repeats once per version; unique among current versions."
+        data_tests:
+          - not_null
+          - unique:
+              config:
+                where: "is_current"  # where is_current = true
       - name: first_name
         description: "Customer's first name, lowercased and trimmed."
         data_tests:
@@ -79,10 +93,12 @@ models:
         data_tests:
           - not_null
       - name: email
-        description: "Customer's email address, lowercased and trimmed."
+        description: "Customer's email address, lowercased and trimmed. Can repeat across versions of the same customer."
         data_tests:
           - not_null
-          - unique
+          - unique:
+              config:
+                where: "is_current"  # where is_current = true
       - name: mobile_number
         description: "Customer's mobile number including dial code, trimmed but otherwise as in the source."
         data_tests:
@@ -106,6 +122,18 @@ models:
         description: "Timestamp when the customer record was created."
       - name: updated_at
         description: "Timestamp when the customer record was last updated."
+        data_tests:
+          - not_null
+      - name: valid_from
+        description: "When this version became valid (the source updated_at of the change)."
+        data_tests:
+          - not_null
+      - name: valid_to
+        description: "When this version stopped being valid. 9999-12-31 for the current version."
+        data_tests:
+          - not_null
+      - name: is_current
+        description: "True for the customer's current version."
         data_tests:
           - not_null
 

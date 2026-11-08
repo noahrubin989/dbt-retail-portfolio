@@ -1,10 +1,11 @@
 with raw_data as (
-    select * from {{ source('raw', 'customers') }}
+    select * from {{ ref('snp_customers') }}
 ),
 
 cleaned as (
     select
-        customer_id
+        dbt_scd_id as customer_version_id
+        , customer_id
         , lower(trim(first_name)) as first_name
         , lower(trim(last_name)) as last_name
         , lower(trim(email)) as email
@@ -20,6 +21,9 @@ cleaned as (
         , lower(trim(sex)) as sex
         , created_at
         , updated_at
+        , dbt_valid_from as valid_from
+        , dbt_valid_to as valid_to
+        , dbt_valid_to = cast('9999-12-31' as timestamp) as is_current
     from raw_data
 )
 

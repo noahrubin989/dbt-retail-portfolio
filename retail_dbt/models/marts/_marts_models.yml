@@ -218,17 +218,32 @@ models:
           - not_null
 
   - name: dim_customer
-    description: "Customers plus a Guest member (key -1) that walk-in sales are mapped to. One row per customer."
+    description: "Customers as a type 2 slowly changing dimension: one row per version of a customer, plus a Guest member (key '-1') that walk-in sales are mapped to. A customer's first version is extended back to 1900-01-01 so sales before snapshotting began still find a version."
     config:
       contract:
         enforced: true
+    data_tests:
+      - dbt_utils.mutually_exclusive_ranges:
+          arguments:
+            lower_bound_column: valid_from
+            upper_bound_column: valid_to
+            partition_by: customer_id
+            gaps: not_allowed
     columns:
       - name: customer_key
-        data_type: integer
-        description: "Key of the customer. Equals the source customer_id; -1 is the Guest member."
+        data_type: varchar
+        description: "Key of this version of the customer, a hash of customer_id and the version's original valid_from. '-1' is the Guest member."
         data_tests:
           - unique
           - not_null
+      - name: customer_id
+        data_type: integer
+        description: "Identifier of the customer, the same across all their versions. -1 for the Guest member."
+        data_tests:
+          - not_null
+          - unique:
+              config:
+                where: "is_current"
       - name: first_name
         data_type: varchar
         description: "Customer's first name. 'guest' for the Guest member."
@@ -240,22 +255,24 @@ models:
         data_tests:
           - not_null:
               config:
-                where: "customer_key != -1"
+                where: "customer_key != '-1'"
       - name: email
         data_type: varchar
         description: "Customer's email address. Null for the Guest member."
         data_tests:
           - not_null:
               config:
-                where: "customer_key != -1"
-          - unique
+                where: "customer_key != '-1'"
+          - unique:
+              config:
+                where: "is_current"
       - name: mobile_number
         data_type: varchar
         description: "Customer's mobile number including dial code. Null for the Guest member."
         data_tests:
           - not_null:
               config:
-                where: "customer_key != -1"
+                where: "customer_key != '-1'"
       - name: is_marketing_opted_in
         data_type: boolean
         description: "True if the customer has opted in to marketing. False for the Guest member."
@@ -274,6 +291,21 @@ models:
           - accepted_values:
               arguments:
                 values: ['female', 'male', 'other', 'unknown']
+      - name: valid_from
+        data_type: timestamp
+        description: "When this version became valid. 1900-01-01 for a customer's first version."
+        data_tests:
+          - not_null
+      - name: valid_to
+        data_type: timestamp
+        description: "When this version stopped being valid. 9999-12-31 for the current version."
+        data_tests:
+          - not_null
+      - name: is_current
+        data_type: boolean
+        description: "True for the customer's current version."
+        data_tests:
+          - not_null
 
   - name: dim_date
     description: "One row per calendar day from 2020-01-01 to 2075-12-31, generated rather than loaded from a source. Covers every order and return date. Joined to fact_sales on date_key."
