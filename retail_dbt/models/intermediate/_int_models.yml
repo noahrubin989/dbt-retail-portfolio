@@ -82,6 +82,9 @@ models:
         description: "Units returned, as a negative number. The sign is flipped here from the positive value in the source."
         data_tests:
           - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "< 0"  # which should not return any rows, since all quantities should be negative
       - name: unit_price
         description: "Price per unit from the original sale. Stays positive."
         data_tests:
