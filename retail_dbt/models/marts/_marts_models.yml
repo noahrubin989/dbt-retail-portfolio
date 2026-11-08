@@ -6,6 +6,23 @@ models:
     config:
       contract:
         enforced: true
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:  # replaces the assert_fact_sales_grain_is_unique.sql test I manually wrote
+          arguments:
+            combination_of_columns:  # the columns below define the grain of fact_sales
+              - transaction_type
+              - order_line_id
+              - return_id
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quantity > 0 and line_amount > 0"
+          config: 
+            where: "transaction_type = 'sale'"  # which should not return any rows, since all sales should be positive
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "quantity < 0 and line_amount < 0"
+          config: 
+            where: "transaction_type = 'return'"  # which should not return any rows, since all returns should be negative
     columns:
       - name: order_line_id
         data_type: integer
