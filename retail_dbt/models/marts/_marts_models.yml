@@ -59,8 +59,8 @@ models:
                 to: ref('dim_product')
                 field: product_key
       - name: customer_key
-        data_type: integer
-        description: "Key of the customer. -1 is the Guest member for walk-in sales. Joins to dim_customer."
+        data_type: varchar
+        description: "Key of the customer version valid when the sale or return happened. '-1' is the Guest member for walk-in sales. Joins to dim_customer."
         data_tests:
           - not_null
           - relationships:
