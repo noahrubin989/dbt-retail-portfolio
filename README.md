@@ -5,6 +5,7 @@ A dbt Core project that turns raw retail data (customers, products, stores, orde
 ## Stack
 
 - dbt Core 1.12.6 with dbt-duckdb 1.11.0
+- dbt_utils 1.4.1 (generic tests and `date_spine`)
 - DuckDB (local database file)
 - Python 3.12
 
@@ -17,8 +18,8 @@ retail_dbt/
     intermediate/   joined, business-ready building blocks (2 models)
     marts/          star schema tables with enforced contracts (6 models)
   macros/           reusable SQL (date_to_key)
-  tests/            singular tests
   analyses/         ad hoc queries, compiled but not materialised
+  packages.yml      package dependencies (dbt_utils), pinned in package-lock.yml
 docs/
   design.md         design decisions and fact table grain
 ```
@@ -41,17 +42,23 @@ The web channel is modelled as a store with `store_type = 'online'`.
 
 ## Design decisions
 
-- **Grain.** A return reuses the `order_line_id` of the sale it reverses, so that column is not unique. A row is identified by `transaction_type` + `order_line_id` + `return_id`, checked by `tests/assert_fact_sales_grain_is_unique.sql`.
+- **Grain.** A return reuses the `order_line_id` of the sale it reverses, so that column is not unique. A row is identified by `transaction_type` + `order_line_id` + `return_id`, checked by `dbt_utils.unique_combination_of_columns` on `fact_sales`.
 - **Guest and Unknown members.** Walk-in sales (null `customer_id`) map to a Guest row with key `-1` in `dim_customer`. Orders with a null store or payment method map to an Unknown row with key `-1` in `dim_store` and `dim_payment_method`. No fact row has a null foreign key, and no revenue is dropped.
 - **Returns land on the return date.** `date_key` for a return comes from `return_timestamp`, not the original sale date.
 - **Dimension keys equal source ids**, so the fact table carries keys without joining to the dimensions. `relationships` tests prove every key resolves.
-- **`dim_date` is generated**, not loaded: one row per day from 2020-01-01 to 2075-12-31.
+- **`dim_date` is generated**, not loaded: one row per day from 2020-01-01 to 2075-12-31, built with `dbt_utils.date_spine` so the SQL is not tied to DuckDB.
 - **One definition of the date key.** The `date_to_key` macro builds the `yyyymmdd` integer for `dim_date` and both halves of `fact_sales`.
 - **Contracts.** All six marts enforce column names and types, so upstream changes can't silently alter the public interface.
 
 ## Data quality
 
-A full `dbt build` runs 156 tests and finishes with `PASS=148 WARN=8 ERROR=0`. The 8 warnings are deliberate: the source data was seeded with defects, and they are reported in staging and intermediate and resolved before the marts.
+A full `dbt build` builds 15 models, runs 147 tests and finishes with `PASS=154 WARN=8 ERROR=0`. The 8 warnings are deliberate: the source data was seeded with defects, and they are reported in staging and intermediate and resolved before the marts.
+
+Besides dbt's built-in tests, the project uses dbt_utils tests for rules that span columns or ranges:
+
+- `unique_combination_of_columns`: the `fact_sales` grain.
+- `expression_is_true`: sale rows have positive `quantity` and `line_amount`, return rows negative, and `int_returns_signed.quantity` is always negative.
+- `accepted_range`: `dim_date` calendar parts stay in range (quarter 1–4, month 1–12, day 1–31, ISO weekday 1–7), and `unit_price` is above zero.
 
 | Test | Rows | Handled by |
 |---|---|---|
@@ -72,6 +79,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install dbt-core==1.12.6 dbt-duckdb==1.11.0
 cd retail_dbt
+dbt deps
 dbt build
 ```
 
