@@ -104,6 +104,10 @@ models:
         description: "Price per unit at the time of sale."
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false  # price should be strictly positive. There's also no max value because no sensible upper limit is known for the price of a product.
       - name: line_amount
         data_type: decimal(18,2)
         description: "quantity * unit_price. Positive for sales and negative for returns."
@@ -299,6 +303,10 @@ models:
         description: "Calendar quarter, 1 to 4."
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:  # supports description outlined above
+              arguments:
+                min_value: 1
+                max_value: 4
       - name: month_number
         data_type: bigint
         description: "Month of the year, 1 to 12."
@@ -314,11 +322,19 @@ models:
         description: "Day of the month, 1 to 31."
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:  # supports description outlined above
+              arguments:
+                min_value: 1
+                max_value: 31
       - name: day_of_week_number
         data_type: bigint
         description: "Day of the week, Monday = 1 to Sunday = 7."
         data_tests:
           - not_null
+          - dbt_utils.accepted_range:  # supports description outlined above
+              arguments:
+                min_value: 1
+                max_value: 7
       - name: day_name
         data_type: varchar
         description: "Name of the day, for example Monday."
