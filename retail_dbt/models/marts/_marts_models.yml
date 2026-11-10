@@ -377,3 +377,15 @@ models:
         description: "True for Saturday and Sunday."
         data_tests:
           - not_null
+      - name: is_holiday
+        data_type: boolean
+        description: "True on Australian national public holidays (from the au_public_holidays seed). Reliable from 2020 to 2075, the seed's range."
+        data_tests:
+          - not_null
+      - name: holiday_name
+        data_type: varchar
+        description: "Name of the public holiday, for example Good Friday. Null on other days."
+        data_tests:
+          - not_null:
+              config:
+                where: "is_holiday"
