@@ -1,0 +1,394 @@
+holiday_date,holiday_name
+2020-01-01,New Year's Day
+2020-01-26,Australia Day
+2020-04-10,Good Friday
+2020-04-13,Easter Monday
+2020-04-25,ANZAC Day
+2020-12-25,Christmas Day
+2020-12-26,Boxing Day
+2021-01-01,New Year's Day
+2021-01-26,Australia Day
+2021-04-02,Good Friday
+2021-04-05,Easter Monday
+2021-04-25,ANZAC Day
+2021-12-25,Christmas Day
+2021-12-26,Boxing Day
+2022-01-01,New Year's Day
+2022-01-26,Australia Day
+2022-04-15,Good Friday
+2022-04-18,Easter Monday
+2022-04-25,ANZAC Day
+2022-09-22,National Day of Mourning for Queen Elizabeth II
+2022-12-25,Christmas Day
+2022-12-26,Boxing Day
+2023-01-01,New Year's Day
+2023-01-26,Australia Day
+2023-04-07,Good Friday
+2023-04-10,Easter Monday
+2023-04-25,ANZAC Day
+2023-12-25,Christmas Day
+2023-12-26,Boxing Day
+2024-01-01,New Year's Day
+2024-01-26,Australia Day
+2024-03-29,Good Friday
+2024-04-01,Easter Monday
+2024-04-25,ANZAC Day
+2024-12-25,Christmas Day
+2024-12-26,Boxing Day
+2025-01-01,New Year's Day
+2025-01-26,Australia Day
+2025-04-18,Good Friday
+2025-04-21,Easter Monday
+2025-04-25,ANZAC Day
+2025-12-25,Christmas Day
+2025-12-26,Boxing Day
+2026-01-01,New Year's Day
+2026-01-26,Australia Day
+2026-04-03,Good Friday
+2026-04-06,Easter Monday
+2026-04-25,ANZAC Day
+2026-12-25,Christmas Day
+2026-12-26,Boxing Day
+2027-01-01,New Year's Day
+2027-01-26,Australia Day
+2027-03-26,Good Friday
+2027-03-29,Easter Monday
+2027-04-25,ANZAC Day
+2027-12-25,Christmas Day
+2027-12-26,Boxing Day
+2028-01-01,New Year's Day
+2028-01-26,Australia Day
+2028-04-14,Good Friday
+2028-04-17,Easter Monday
+2028-04-25,ANZAC Day
+2028-12-25,Christmas Day
+2028-12-26,Boxing Day
+2029-01-01,New Year's Day
+2029-01-26,Australia Day
+2029-03-30,Good Friday
+2029-04-02,Easter Monday
+2029-04-25,ANZAC Day
+2029-12-25,Christmas Day
+2029-12-26,Boxing Day
+2030-01-01,New Year's Day
+2030-01-26,Australia Day
+2030-04-19,Good Friday
+2030-04-22,Easter Monday
+2030-04-25,ANZAC Day
+2030-12-25,Christmas Day
+2030-12-26,Boxing Day
+2031-01-01,New Year's Day
+2031-01-26,Australia Day
+2031-04-11,Good Friday
+2031-04-14,Easter Monday
+2031-04-25,ANZAC Day
+2031-12-25,Christmas Day
+2031-12-26,Boxing Day
+2032-01-01,New Year's Day
+2032-01-26,Australia Day
+2032-03-26,Good Friday
+2032-03-29,Easter Monday
+2032-04-25,ANZAC Day
+2032-12-25,Christmas Day
+2032-12-26,Boxing Day
+2033-01-01,New Year's Day
+2033-01-26,Australia Day
+2033-04-15,Good Friday
+2033-04-18,Easter Monday
+2033-04-25,ANZAC Day
+2033-12-25,Christmas Day
+2033-12-26,Boxing Day
+2034-01-01,New Year's Day
+2034-01-26,Australia Day
+2034-04-07,Good Friday
+2034-04-10,Easter Monday
+2034-04-25,ANZAC Day
+2034-12-25,Christmas Day
+2034-12-26,Boxing Day
+2035-01-01,New Year's Day
+2035-01-26,Australia Day
+2035-03-23,Good Friday
+2035-03-26,Easter Monday
+2035-04-25,ANZAC Day
+2035-12-25,Christmas Day
+2035-12-26,Boxing Day
+2036-01-01,New Year's Day
+2036-01-26,Australia Day
+2036-04-11,Good Friday
+2036-04-14,Easter Monday
+2036-04-25,ANZAC Day
+2036-12-25,Christmas Day
+2036-12-26,Boxing Day
+2037-01-01,New Year's Day
+2037-01-26,Australia Day
+2037-04-03,Good Friday
+2037-04-06,Easter Monday
+2037-04-25,ANZAC Day
+2037-12-25,Christmas Day
+2037-12-26,Boxing Day
+2038-01-01,New Year's Day
+2038-01-26,Australia Day
+2038-04-23,Good Friday
+2038-04-25,ANZAC Day
+2038-04-26,Easter Monday
+2038-12-25,Christmas Day
+2038-12-26,Boxing Day
+2039-01-01,New Year's Day
+2039-01-26,Australia Day
+2039-04-08,Good Friday
+2039-04-11,Easter Monday
+2039-04-25,ANZAC Day
+2039-12-25,Christmas Day
+2039-12-26,Boxing Day
+2040-01-01,New Year's Day
+2040-01-26,Australia Day
+2040-03-30,Good Friday
+2040-04-02,Easter Monday
+2040-04-25,ANZAC Day
+2040-12-25,Christmas Day
+2040-12-26,Boxing Day
+2041-01-01,New Year's Day
+2041-01-26,Australia Day
+2041-04-19,Good Friday
+2041-04-22,Easter Monday
+2041-04-25,ANZAC Day
+2041-12-25,Christmas Day
+2041-12-26,Boxing Day
+2042-01-01,New Year's Day
+2042-01-26,Australia Day
+2042-04-04,Good Friday
+2042-04-07,Easter Monday
+2042-04-25,ANZAC Day
+2042-12-25,Christmas Day
+2042-12-26,Boxing Day
+2043-01-01,New Year's Day
+2043-01-26,Australia Day
+2043-03-27,Good Friday
+2043-03-30,Easter Monday
+2043-04-25,ANZAC Day
+2043-12-25,Christmas Day
+2043-12-26,Boxing Day
+2044-01-01,New Year's Day
+2044-01-26,Australia Day
+2044-04-15,Good Friday
+2044-04-18,Easter Monday
+2044-04-25,ANZAC Day
+2044-12-25,Christmas Day
+2044-12-26,Boxing Day
+2045-01-01,New Year's Day
+2045-01-26,Australia Day
+2045-04-07,Good Friday
+2045-04-10,Easter Monday
+2045-04-25,ANZAC Day
+2045-12-25,Christmas Day
+2045-12-26,Boxing Day
+2046-01-01,New Year's Day
+2046-01-26,Australia Day
+2046-03-23,Good Friday
+2046-03-26,Easter Monday
+2046-04-25,ANZAC Day
+2046-12-25,Christmas Day
+2046-12-26,Boxing Day
+2047-01-01,New Year's Day
+2047-01-26,Australia Day
+2047-04-12,Good Friday
+2047-04-15,Easter Monday
+2047-04-25,ANZAC Day
+2047-12-25,Christmas Day
+2047-12-26,Boxing Day
+2048-01-01,New Year's Day
+2048-01-26,Australia Day
+2048-04-03,Good Friday
+2048-04-06,Easter Monday
+2048-04-25,ANZAC Day
+2048-12-25,Christmas Day
+2048-12-26,Boxing Day
+2049-01-01,New Year's Day
+2049-01-26,Australia Day
+2049-04-16,Good Friday
+2049-04-19,Easter Monday
+2049-04-25,ANZAC Day
+2049-12-25,Christmas Day
+2049-12-26,Boxing Day
+2050-01-01,New Year's Day
+2050-01-26,Australia Day
+2050-04-08,Good Friday
+2050-04-11,Easter Monday
+2050-04-25,ANZAC Day
+2050-12-25,Christmas Day
+2050-12-26,Boxing Day
+2051-01-01,New Year's Day
+2051-01-26,Australia Day
+2051-03-31,Good Friday
+2051-04-03,Easter Monday
+2051-04-25,ANZAC Day
+2051-12-25,Christmas Day
+2051-12-26,Boxing Day
+2052-01-01,New Year's Day
+2052-01-26,Australia Day
+2052-04-19,Good Friday
+2052-04-22,Easter Monday
+2052-04-25,ANZAC Day
+2052-12-25,Christmas Day
+2052-12-26,Boxing Day
+2053-01-01,New Year's Day
+2053-01-26,Australia Day
+2053-04-04,Good Friday
+2053-04-07,Easter Monday
+2053-04-25,ANZAC Day
+2053-12-25,Christmas Day
+2053-12-26,Boxing Day
+2054-01-01,New Year's Day
+2054-01-26,Australia Day
+2054-03-27,Good Friday
+2054-03-30,Easter Monday
+2054-04-25,ANZAC Day
+2054-12-25,Christmas Day
+2054-12-26,Boxing Day
+2055-01-01,New Year's Day
+2055-01-26,Australia Day
+2055-04-16,Good Friday
+2055-04-19,Easter Monday
+2055-04-25,ANZAC Day
+2055-12-25,Christmas Day
+2055-12-26,Boxing Day
+2056-01-01,New Year's Day
+2056-01-26,Australia Day
+2056-03-31,Good Friday
+2056-04-03,Easter Monday
+2056-04-25,ANZAC Day
+2056-12-25,Christmas Day
+2056-12-26,Boxing Day
+2057-01-01,New Year's Day
+2057-01-26,Australia Day
+2057-04-20,Good Friday
+2057-04-23,Easter Monday
+2057-04-25,ANZAC Day
+2057-12-25,Christmas Day
+2057-12-26,Boxing Day
+2058-01-01,New Year's Day
+2058-01-26,Australia Day
+2058-04-12,Good Friday
+2058-04-15,Easter Monday
+2058-04-25,ANZAC Day
+2058-12-25,Christmas Day
+2058-12-26,Boxing Day
+2059-01-01,New Year's Day
+2059-01-26,Australia Day
+2059-03-28,Good Friday
+2059-03-31,Easter Monday
+2059-04-25,ANZAC Day
+2059-12-25,Christmas Day
+2059-12-26,Boxing Day
+2060-01-01,New Year's Day
+2060-01-26,Australia Day
+2060-04-16,Good Friday
+2060-04-19,Easter Monday
+2060-04-25,ANZAC Day
+2060-12-25,Christmas Day
+2060-12-26,Boxing Day
+2061-01-01,New Year's Day
+2061-01-26,Australia Day
+2061-04-08,Good Friday
+2061-04-11,Easter Monday
+2061-04-25,ANZAC Day
+2061-12-25,Christmas Day
+2061-12-26,Boxing Day
+2062-01-01,New Year's Day
+2062-01-26,Australia Day
+2062-03-24,Good Friday
+2062-03-27,Easter Monday
+2062-04-25,ANZAC Day
+2062-12-25,Christmas Day
+2062-12-26,Boxing Day
+2063-01-01,New Year's Day
+2063-01-26,Australia Day
+2063-04-13,Good Friday
+2063-04-16,Easter Monday
+2063-04-25,ANZAC Day
+2063-12-25,Christmas Day
+2063-12-26,Boxing Day
+2064-01-01,New Year's Day
+2064-01-26,Australia Day
+2064-04-04,Good Friday
+2064-04-07,Easter Monday
+2064-04-25,ANZAC Day
+2064-12-25,Christmas Day
+2064-12-26,Boxing Day
+2065-01-01,New Year's Day
+2065-01-26,Australia Day
+2065-03-27,Good Friday
+2065-03-30,Easter Monday
+2065-04-25,ANZAC Day
+2065-12-25,Christmas Day
+2065-12-26,Boxing Day
+2066-01-01,New Year's Day
+2066-01-26,Australia Day
+2066-04-09,Good Friday
+2066-04-12,Easter Monday
+2066-04-25,ANZAC Day
+2066-12-25,Christmas Day
+2066-12-26,Boxing Day
+2067-01-01,New Year's Day
+2067-01-26,Australia Day
+2067-04-01,Good Friday
+2067-04-04,Easter Monday
+2067-04-25,ANZAC Day
+2067-12-25,Christmas Day
+2067-12-26,Boxing Day
+2068-01-01,New Year's Day
+2068-01-26,Australia Day
+2068-04-20,Good Friday
+2068-04-23,Easter Monday
+2068-04-25,ANZAC Day
+2068-12-25,Christmas Day
+2068-12-26,Boxing Day
+2069-01-01,New Year's Day
+2069-01-26,Australia Day
+2069-04-12,Good Friday
+2069-04-15,Easter Monday
+2069-04-25,ANZAC Day
+2069-12-25,Christmas Day
+2069-12-26,Boxing Day
+2070-01-01,New Year's Day
+2070-01-26,Australia Day
+2070-03-28,Good Friday
+2070-03-31,Easter Monday
+2070-04-25,ANZAC Day
+2070-12-25,Christmas Day
+2070-12-26,Boxing Day
+2071-01-01,New Year's Day
+2071-01-26,Australia Day
+2071-04-17,Good Friday
+2071-04-20,Easter Monday
+2071-04-25,ANZAC Day
+2071-12-25,Christmas Day
+2071-12-26,Boxing Day
+2072-01-01,New Year's Day
+2072-01-26,Australia Day
+2072-04-08,Good Friday
+2072-04-11,Easter Monday
+2072-04-25,ANZAC Day
+2072-12-25,Christmas Day
+2072-12-26,Boxing Day
+2073-01-01,New Year's Day
+2073-01-26,Australia Day
+2073-03-24,Good Friday
+2073-03-27,Easter Monday
+2073-04-25,ANZAC Day
+2073-12-25,Christmas Day
+2073-12-26,Boxing Day
+2074-01-01,New Year's Day
+2074-01-26,Australia Day
+2074-04-13,Good Friday
+2074-04-16,Easter Monday
+2074-04-25,ANZAC Day
+2074-12-25,Christmas Day
+2074-12-26,Boxing Day
+2075-01-01,New Year's Day
+2075-01-26,Australia Day
+2075-04-05,Good Friday
+2075-04-08,Easter Monday
+2075-04-25,ANZAC Day
+2075-12-25,Christmas Day
+2075-12-26,Boxing Day

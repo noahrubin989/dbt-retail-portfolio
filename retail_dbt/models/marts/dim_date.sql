@@ -7,6 +7,11 @@ with dates as (
             end_date="cast('2076-01-01' as date)"
         ) }}
     )
+), holidays as (
+    select
+        holiday_date
+        , holiday_name
+    from {{ ref('au_public_holidays') }}  -- the seed
 )
 
 select
@@ -20,4 +25,8 @@ select
     , extract(isodow from date_day) as day_of_week_number
     , dayname(date_day) as day_name
     , extract(isodow from date_day) in (6, 7) as is_weekend
+    , holidays.holiday_date is not null as is_holiday
+    , holidays.holiday_name
 from dates
+left join holidays  
+    on dates.date_day = holidays.holiday_date
