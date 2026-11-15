@@ -20,6 +20,7 @@ retail_dbt/
     intermediate/   joined, business-ready building blocks (2 models)
     marts/          star schema tables with enforced contracts (6 models)
   macros/           reusable SQL (date_to_key)
+  tests/generic/    custom generic tests (is_positive)
   analyses/         ad hoc queries, compiled but not materialised
   packages.yml      package dependencies (dbt_utils), pinned in package-lock.yml
 scripts/
@@ -64,7 +65,7 @@ The web channel is modelled as a store with `store_type = 'online'`.
 
 ## Data quality
 
-A full `dbt build` loads 1 seed, builds 1 snapshot and 15 models, runs 164 tests and finishes with `PASS=173 WARN=8 ERROR=0`. The 8 warnings are deliberate: the source data was seeded with defects, and they are reported in staging and intermediate and resolved before the marts.
+A full `dbt build` loads 1 seed, builds 1 snapshot and 15 models, runs 170 tests and finishes with `PASS=179 WARN=8 ERROR=0`. The 8 warnings are deliberate: the source data was seeded with defects, and they are reported in staging and intermediate and resolved before the marts.
 
 Besides dbt's built-in tests, the project uses dbt_utils tests for rules that span columns or ranges:
 
@@ -72,6 +73,8 @@ Besides dbt's built-in tests, the project uses dbt_utils tests for rules that sp
 - `expression_is_true`: sale rows have positive `quantity` and `line_amount`, return rows negative, and `int_returns_signed.quantity` is always negative.
 - `accepted_range`: `dim_date` calendar parts stay in range (quarter 1–4, month 1–12, day 1–31, ISO weekday 1–7), and `unit_price` is above zero.
 - `mutually_exclusive_ranges`: the versions of each customer in `stg_customers` and `dim_customer` follow on from each other with no gaps or overlaps, so every sale matches exactly one version.
+
+The project also defines its own generic test, `is_positive` in `tests/generic/`. It fails on any row where the column is zero or negative. It checks the quantities and unit prices in staging and intermediate whose descriptions say they are always positive, before returns are given a negative sign in `fact_sales`.
 
 | Test | Rows | Handled by |
 |---|---|---|

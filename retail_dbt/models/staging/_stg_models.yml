@@ -190,6 +190,7 @@ models:
         description: "Number of units returned. Always positive here; the sign is flipped later when building fact_sales."
         data_tests:
           - not_null
+          - is_positive
       - name: return_timestamp
         description: "Timestamp when the return happened."
         data_tests:
@@ -277,10 +278,12 @@ models:
         description: "Number of units bought. Always positive."
         data_tests:
           - not_null
+          - is_positive
       - name: unit_price
         description: "Price per unit at the time of sale, as a decimal with the currency symbol removed."
         data_tests:
           - not_null
+          - is_positive
       - name: created_at
         description: "Timestamp when the order line record was created."
       - name: updated_at
