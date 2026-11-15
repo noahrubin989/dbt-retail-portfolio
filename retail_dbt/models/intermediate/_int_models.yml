@@ -91,6 +91,7 @@ models:
         description: "Price per unit from the original sale. Stays positive."
         data_tests:
           - not_null
+          - is_positive
       - name: customer_id
         description: "Customer on the original order. Null for walk-in sales, which are mapped to the Guest customer later."
       - name: store_id
