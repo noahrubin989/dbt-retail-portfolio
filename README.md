@@ -18,7 +18,7 @@ retail_dbt/
   models/
     staging/        cleaned views of each source (7 models); stg_customers reads the snapshot
     intermediate/   joined, business-ready building blocks (2 models)
-    marts/          star schema tables with enforced contracts (6 models)
+    marts/          star schema tables with enforced contracts (6 models), and the exposures that use them
   macros/           reusable SQL (date_to_key)
   tests/generic/    custom generic tests (is_positive)
   analyses/         ad hoc queries, compiled but not materialised
@@ -134,6 +134,23 @@ The snapshot has to run between the two loads. The second load overwrites `raw.c
 ```
 pip install holidays==0.108
 python scripts/generate_holidays.py
+```
+
+## Exposures
+
+The marts are declared as feeding four downstream uses in `models/marts/_exposures.yml`. These are examples, so the URLs are placeholders. They appear at the end of the lineage graph, so it shows what a change to a model would affect.
+
+| Exposure | Type | Uses |
+|---|---|---|
+| `sales_dashboard` | dashboard | `fact_sales` and all five dimensions |
+| `marketing_comms` | notebook | `fact_sales`, `dim_customer` |
+| `store_performance_report` | analysis | `fact_sales`, `dim_store`, `dim_date` |
+| `product_demand_forecast` | ml | `fact_sales`, `dim_product`, `dim_date` |
+
+To build and test only what one of them needs:
+
+```
+dbt build --select +exposure:sales_dashboard
 ```
 
 ## Docs and lineage
