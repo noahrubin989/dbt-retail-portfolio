@@ -1,6 +1,12 @@
 # Retail analytics with dbt Core and DuckDB
 
-A dbt Core project that turns raw retail data (customers, products, stores, orders, order lines, returns, payment methods) into a star schema for analytics. It covers layered modelling, data quality testing, handling of bad source data, enforced model contracts, and customer history as a type 2 slowly changing dimension built on a dbt snapshot.
+A dbt Core project that turns raw retail data (customers, products, stores, orders, order lines, returns, payment methods) into a star schema for analytics.
+
+It covers:
+- **Modelling:** layered models (sources, staging, intermediate, marts), customer history as a type 2 slowly changing dimension built on a dbt snapshot, a seed for public holidays, and a reusable macro.
+- **Data quality:** source tests and freshness checks, built-in, dbt_utils and custom generic tests, and deliberate defects in the source data that are reported and then resolved before the marts.
+- **Reliability:** enforced contracts and database constraints on the marts.
+- **Documentation:** descriptions on every model and column, and exposures for what uses the marts.
 
 ## Stack
 
@@ -35,11 +41,12 @@ docs/
 
 | Layer | Materialised as | Schema | What happens |
 |---|---|---|---|
+| Source | (loaded by `scripts/`) | `raw` | Seven raw tables, with primary key tests and freshness checks |
 | Seed | table | `main` | `au_public_holidays` loaded from a CSV kept in the repo |
 | Snapshot | snapshot table | `snapshots` | `raw.customers` history: a new version whenever `updated_at` changes |
 | Staging | view | `staging` | Text trimmed and lowercased, flags typed as booleans, prices cast to decimal, exact duplicate orders removed |
 | Intermediate | view | `intermediate` | Order lines joined to orders; returns joined to their original line with quantity made negative |
-| Marts | table | `marts` | Five dimensions and one fact table |
+| Marts | table | `marts` | Five dimensions and one fact table, with enforced contracts and constraints |
 
 ## The star schema
 
@@ -64,6 +71,23 @@ The web channel is modelled as a store with `store_type = 'online'`.
 - **Contracts.** All six marts enforce column names and types, so upstream changes can't silently alter the public interface.
 - **Constraints.** Each dimension's key is a `primary_key`, and the five key columns in `fact_sales` are `not_null`. DuckDB enforces these when it writes the rows, so a bad row fails the build instead of landing in the table. The matching tests are kept, because not every database enforces constraints. `fact_sales` has no primary key, because its grain includes `return_id`, which is null on sale rows. There are no `foreign_key` constraints either, because DuckDB won't let a dimension be rebuilt while a fact table references it. The `relationships` tests cover the joins instead.
 
+## Exposures
+
+The marts are declared as feeding four downstream uses in `models/marts/_exposures.yml`. These are examples, so the URLs are placeholders. They appear at the end of the lineage graph, so it shows what a change to a model would affect.
+
+| Exposure | Type | Uses |
+|---|---|---|
+| `sales_dashboard` | dashboard | `fact_sales` and all five dimensions |
+| `marketing_comms` | notebook | `fact_sales`, `dim_customer` |
+| `store_performance_report` | analysis | `fact_sales`, `dim_store`, `dim_date` |
+| `product_demand_forecast` | ml | `fact_sales`, `dim_product`, `dim_date` |
+
+To build and test only what one of them needs:
+
+```
+dbt build --select +exposure:sales_dashboard
+```
+
 ## Data quality
 
 A full `dbt build` loads 1 seed, builds 1 snapshot and 15 models, runs 184 tests and finishes with `PASS=192 WARN=9 ERROR=0`. The 9 warnings are deliberate: the source data was seeded with defects, and they are reported in the sources, staging and intermediate and resolved before the marts.
@@ -80,6 +104,8 @@ Besides dbt's built-in tests, the project uses dbt_utils tests for rules that sp
 - `mutually_exclusive_ranges`: the versions of each customer in `stg_customers` and `dim_customer` follow on from each other with no gaps or overlaps, so every sale matches exactly one version.
 
 The project also defines its own generic test, `is_positive` in `tests/generic/`. It fails on any row where the column is zero or negative. It checks the quantities and unit prices in staging and intermediate whose descriptions say they are always positive, before returns are given a negative sign in `fact_sales`.
+
+The 9 warnings come from these deliberate defects:
 
 | Test | Rows | Handled by |
 |---|---|---|
@@ -137,26 +163,18 @@ pip install holidays==0.108
 python scripts/generate_holidays.py
 ```
 
-## Exposures
-
-The marts are declared as feeding four downstream uses in `models/marts/_exposures.yml`. These are examples, so the URLs are placeholders. They appear at the end of the lineage graph, so it shows what a change to a model would affect.
-
-| Exposure | Type | Uses |
-|---|---|---|
-| `sales_dashboard` | dashboard | `fact_sales` and all five dimensions |
-| `marketing_comms` | notebook | `fact_sales`, `dim_customer` |
-| `store_performance_report` | analysis | `fact_sales`, `dim_store`, `dim_date` |
-| `product_demand_forecast` | ml | `fact_sales`, `dim_product`, `dim_date` |
-
-To build and test only what one of them needs:
-
-```
-dbt build --select +exposure:sales_dashboard
-```
-
 ## Docs and lineage
 
 ```
 dbt docs generate
 dbt docs serve
 ```
+
+Open the lineage graph with the icon in the bottom right. In its `--select` box, `+fact_sales` shows everything upstream of the fact table, and `stg_customers+` shows everything downstream of the customer history.
+
+## What's next
+
+Topics deliberately left for a later project:
+- **Incremental models:** build `fact_sales` from new orders only, and handle returns that arrive late.
+- **CI:** run `dbt build` on every pull request with GitHub Actions, and build only changed models with `state:modified+`.
+- **Unit tests:** test the point-in-time join and flag parsing against small fixed inputs.
