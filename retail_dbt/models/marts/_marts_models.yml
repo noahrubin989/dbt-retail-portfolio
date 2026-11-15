@@ -51,6 +51,8 @@ models:
           - not_null
       - name: product_key
         data_type: integer
+        constraints:
+          - type: not_null
         description: "Key of the product. Joins to dim_product."
         data_tests:
           - not_null
@@ -60,6 +62,8 @@ models:
                 field: product_key
       - name: customer_key
         data_type: varchar
+        constraints:
+          - type: not_null
         description: "Key of the customer version valid when the sale or return happened. '-1' is the Guest member for walk-in sales. Joins to dim_customer."
         data_tests:
           - not_null
@@ -69,6 +73,8 @@ models:
                 field: customer_key
       - name: store_key
         data_type: integer
+        constraints:
+          - type: not_null
         description: "Key of the store or web channel. -1 is the Unknown member. Joins to dim_store."
         data_tests:
           - not_null
@@ -78,6 +84,8 @@ models:
                 field: store_key
       - name: payment_method_key
         data_type: integer
+        constraints:
+          - type: not_null
         description: "Key of the payment method. -1 is the Unknown member. Joins to dim_payment_method."
         data_tests:
           - not_null
@@ -87,6 +95,8 @@ models:
                 field: payment_method_key
       - name: date_key
         data_type: integer
+        constraints:
+          - type: not_null
         description: "Date of the sale, or of the return for return rows, as an integer in yyyymmdd form. Joins to dim_date."
         data_tests:
           - not_null
@@ -122,6 +132,8 @@ models:
     columns:
       - name: payment_method_key
         data_type: integer
+        constraints:
+          - type: primary_key
         description: "Key of the payment method. Equals the source payment_method_id; -1 is the Unknown member."
         data_tests:
           - unique
@@ -145,6 +157,8 @@ models:
     columns:
       - name: store_key
         data_type: integer
+        constraints:
+          - type: primary_key
         description: "Key of the store. Equals the source store_id; -1 is the Unknown member."
         data_tests:
           - unique
@@ -192,6 +206,8 @@ models:
     columns:
       - name: product_key
         data_type: integer
+        constraints:
+          - type: primary_key
         description: "Key of the product. Equals the source product_id."
         data_tests:
           - unique
@@ -232,6 +248,8 @@ models:
     columns:
       - name: customer_key
         data_type: varchar
+        constraints:
+          - type: primary_key
         description: "Key of this version of the customer, a hash of customer_id and the version's original valid_from. '-1' is the Guest member."
         data_tests:
           - unique
@@ -315,6 +333,8 @@ models:
     columns:
       - name: date_key
         data_type: integer
+        constraints:
+          - type: primary_key
         description: "Date as an integer in yyyymmdd form, for example 20261031. Joined to fact_sales on this column."
         data_tests:
           - unique
