@@ -25,10 +25,12 @@ models:
         description: "Number of units bought on this line. Always positive."
         data_tests:
           - not_null
+          - is_positive
       - name: unit_price
         description: "Price per unit at the time of sale, as a decimal with the currency symbol removed."
         data_tests:
           - not_null
+          - is_positive
       - name: customer_id
         description: "Identifier of the customer who placed the order. Null for walk-in sales, which are mapped to the Guest customer later."
       - name: store_id
