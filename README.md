@@ -65,7 +65,11 @@ The web channel is modelled as a store with `store_type = 'online'`.
 
 ## Data quality
 
-A full `dbt build` loads 1 seed, builds 1 snapshot and 15 models, runs 170 tests and finishes with `PASS=179 WARN=8 ERROR=0`. The 8 warnings are deliberate: the source data was seeded with defects, and they are reported in staging and intermediate and resolved before the marts.
+A full `dbt build` loads 1 seed, builds 1 snapshot and 15 models, runs 184 tests and finishes with `PASS=192 WARN=9 ERROR=0`. The 9 warnings are deliberate: the source data was seeded with defects, and they are reported in the sources, staging and intermediate and resolved before the marts.
+
+Each source table's primary key is tested for `unique` and `not_null` before staging reads it, so a broken load is caught where it arrives.
+
+`orders`, `order_lines` and `returns` also have freshness checks on `updated_at`, which warn after 1 day and error after 7, as if raw were loaded daily. Run them with `dbt source freshness`, which is separate from `dbt build`. With the static synthetic data they report `ERROR STALE`, which is expected.
 
 Besides dbt's built-in tests, the project uses dbt_utils tests for rules that span columns or ranges:
 
@@ -78,6 +82,7 @@ The project also defines its own generic test, `is_positive` in `tests/generic/`
 
 | Test | Rows | Handled by |
 |---|---|---|
+| Source `raw.orders` duplicate `order_id` | 15 ids | Exact duplicates removed in `stg_orders` |
 | `stg_orders` null `store_id` | 20 | Mapped to Unknown (-1) in `fact_sales` |
 | `stg_orders` null `payment_method_id` | 20 | Mapped to Unknown (-1) in `fact_sales` |
 | `stg_order_lines` orphan `order_id` | 25 | Dropped by inner join in `int_order_lines_joined` |

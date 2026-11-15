@@ -34,6 +34,11 @@ sources:
               - not_null
       - name: orders
         description: One row per order (the header). Products are in order_lines.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
         columns:
           - name: order_id 
             description: "Not unique in raw: some orders were loaded twice. Exact duplicates are removed in stg_orders."
@@ -44,6 +49,11 @@ sources:
               - not_null
       - name: order_lines
         description: One row per product on an order.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
         columns:
           - name: order_line_id 
             data_tests:
@@ -51,6 +61,11 @@ sources:
               - not_null
       - name: returns
         description: One row per returned product line.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
         columns:
           - name: return_id 
             data_tests:
