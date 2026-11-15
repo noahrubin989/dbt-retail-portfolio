@@ -6,15 +6,68 @@ sources:
     tables:
       - name: stores
         description: One row per store, including the web channel.
+        columns:
+          - name: store_id 
+            data_tests:
+              - unique 
+              - not_null
       - name: payment_methods
         description: One row per way a customer can pay.
+        columns:
+          - name: payment_method_id 
+            data_tests:
+              - unique 
+              - not_null
       - name: customers
         description: One row per customer.
+        columns:
+          - name: customer_id 
+            data_tests:
+              - unique 
+              - not_null
       - name: products
         description: One row per product the store sells.
+        columns:
+          - name: product_id 
+            data_tests:
+              - unique 
+              - not_null
       - name: orders
         description: One row per order (the header). Products are in order_lines.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
+        columns:
+          - name: order_id 
+            description: "Not unique in raw: some orders were loaded twice. Exact duplicates are removed in stg_orders."
+            data_tests:
+              - unique:
+                  config:
+                    severity: warn
+              - not_null
       - name: order_lines
         description: One row per product on an order.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
+        columns:
+          - name: order_line_id 
+            data_tests:
+              - unique 
+              - not_null
       - name: returns
         description: One row per returned product line.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after: {count: 1, period: day}
+            error_after: {count: 7, period: day}
+        columns:
+          - name: return_id 
+            data_tests:
+              - unique 
+              - not_null
