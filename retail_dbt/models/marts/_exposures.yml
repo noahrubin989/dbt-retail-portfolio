@@ -1,0 +1,55 @@
+# https://docs.getdbt.com/docs/build/exposures
+exposures:
+  - name: sales_dashboard
+    label: Sales Dashboard
+    type: dashboard
+    maturity: medium  # Indicates the level of confidence or stability in the exposure.
+    url: https://example.com/dashboards/sales
+    description: "This dashboard provides insights into sales performance, including total sales, average order value, and customer behavior."
+    depends_on:
+      - ref('fact_sales')
+      - ref('dim_customer')
+      - ref('dim_product')
+      - ref('dim_store')
+      - ref('dim_payment_method')
+      - ref('dim_date')
+    owner:
+      name: "Noah Rubin"
+
+  - name: marketing_comms
+    label: Marketing Communications
+    type: notebook
+    maturity: high
+    url: https://example.com/notebooks/marketing-comms
+    description: "This notebook provides insights into marketing communications performance, including campaign effectiveness, customer engagement, and communication channels."
+    depends_on:
+      - ref('fact_sales')
+      - ref('dim_customer')
+    owner:
+      name: "Noah Rubin"
+
+  - name: store_performance_report
+    label: Store Performance Report
+    type: analysis
+    maturity: medium
+    url: https://example.com/reports/store-performance
+    description: "Monthly report comparing net revenue and return rates across stores and the web channel."
+    depends_on:
+      - ref('fact_sales')
+      - ref('dim_store')
+      - ref('dim_date')
+    owner:
+      name: "Noah Rubin"
+
+  - name: product_demand_forecast
+    label: Product Demand Forecast
+    type: ml
+    maturity: low
+    url: https://example.com/ml/product-demand-forecast
+    description: "Model that forecasts weekly units sold per product, using public holidays and weekends as features."
+    depends_on:
+      - ref('fact_sales')
+      - ref('dim_product')
+      - ref('dim_date')
+    owner:
+      name: "Noah Rubin"
