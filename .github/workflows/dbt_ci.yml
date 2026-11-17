@@ -1,0 +1,36 @@
+name: dbt CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actio
+        with:
+          python-ve
+          cache: pip
+
+      - name: Install Python packages
+        run: pip in
+
+      - name: Gener
+        run: python scripts/generate_data.py retail_dbt/ci.duckdb
+
+      - name: Install dbt packages
+        working-dir
+        run: dbt deps
+
+      - name: Build and test
+        working-dir
+        run: dbt build --profiles-dir ci
+
+      
