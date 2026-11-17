@@ -1,0 +1,7 @@
+retail_dbt:  # must match the profile: value in dbt_project.yml,
+  target: ci
+  outputs:
+    ci:
+      type: duckdb
+      path: ci.duckdb
+      threads: 4
