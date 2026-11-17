@@ -10,27 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check
+      - name: Check out the repo
         uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actio
+        uses: actions/setup-python@v6
         with:
-          python-ve
+          python-version: "3.12"
           cache: pip
 
       - name: Install Python packages
-        run: pip in
+        run: pip install -r requirements.txt
 
-      - name: Gener
+      - name: Generate raw data
         run: python scripts/generate_data.py retail_dbt/ci.duckdb
 
       - name: Install dbt packages
-        working-dir
+        working-directory: retail_dbt
         run: dbt deps
 
       - name: Build and test
-        working-dir
+        working-directory: retail_dbt
         run: dbt build --profiles-dir ci
-
-      
