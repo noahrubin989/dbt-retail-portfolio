@@ -5,7 +5,7 @@ A dbt Core project that turns raw retail data (customers, products, stores, orde
 It covers:
 - **Modelling:** layered models (sources, staging, intermediate, marts), customer history as a type 2 slowly changing dimension built on a dbt snapshot, a seed for public holidays, and a reusable macro.
 - **Data quality:** source tests and freshness checks, built-in, dbt_utils and custom generic tests, and deliberate defects in the source data that are reported and then resolved before the marts.
-- **Reliability:** enforced contracts and database constraints on the marts.
+- **Reliability:** enforced contracts and database constraints on the marts, and a GitHub Actions workflow that builds and tests the project on every pull request.
 - **Documentation:** descriptions on every model and column, and exposures for what uses the marts.
 
 ## Stack
@@ -18,7 +18,11 @@ It covers:
 ## Project layout
 
 ```
+.github/workflows/
+  dbt_ci.yml        CI: builds and tests the project on every pull request into main
+requirements.txt    pinned Python packages, used by CI
 retail_dbt/
+  ci/               profiles.yml used only by CI
   seeds/            au_public_holidays: national public holidays, 2020 to 2075
   snapshots/        snp_customers: history of raw.customers
   models/
@@ -139,7 +143,7 @@ git clone https://github.com/noahrubin989/dbt-retail-portfolio.git
 cd dbt-retail-portfolio
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install dbt-core==1.12.6 dbt-duckdb==1.11.0
+pip install -r requirements.txt
 
 # 1. First load of raw data, and the first snapshot of it
 python scripts/generate_data.py retail_dbt/dev.duckdb
@@ -163,6 +167,30 @@ pip install holidays==0.108
 python scripts/generate_holidays.py
 ```
 
+## Continuous integration
+
+Every pull request into `main` runs `.github/workflows/dbt_ci.yml` with GitHub Actions. On a fresh Ubuntu machine it:
+
+1. Installs the pinned packages in `requirements.txt`.
+2. Generates the raw data into a throwaway database, `ci.duckdb`.
+3. Runs `dbt deps` to install dbt_utils.
+4. Runs `dbt build --profiles-dir ci`, which loads the seed, builds the snapshot and all models, and runs every test.
+
+If any model or test errors, the check fails and the pull request shows a red cross. Warnings don't fail it, so the 9 deliberate warnings are still allowed.
+
+`--profiles-dir ci` points dbt at `retail_dbt/ci/profiles.yml` instead of `~/.dbt/profiles.yml`. That file is safe to commit because DuckDB needs no credentials. A cloud warehouse would keep its credentials in GitHub Secrets instead.
+
+CI runs only the first data load, not `simulate_next_load.py`, so it checks that the project builds and passes its tests, not the customer history counts above.
+
+The same steps can be run locally from the repo root:
+
+```
+python scripts/generate_data.py retail_dbt/ci.duckdb
+cd retail_dbt
+dbt deps
+dbt build --profiles-dir ci
+```
+
 ## Docs and lineage
 
 ```
@@ -176,5 +204,5 @@ Open the lineage graph with the icon in the bottom right. In its `--select` box,
 
 Topics deliberately left for a later project:
 - **Incremental models:** build `fact_sales` from new orders only, and handle returns that arrive late.
-- **CI:** run `dbt build` on every pull request with GitHub Actions, and build only changed models with `state:modified+`.
+- **Slim CI:** build only changed models and their dependants with `state:modified+`, instead of the whole project.
 - **Unit tests:** test the point-in-time join and flag parsing against small fixed inputs.
